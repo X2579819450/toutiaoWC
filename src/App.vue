@@ -1,5 +1,7 @@
 <template>
-  <div>黑马头条</div>
+  <div>
+    <span class="toutiao toutiao-gengduo"></span>
+  </div>
 </template>
 
 <script>
