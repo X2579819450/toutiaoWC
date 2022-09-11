@@ -108,7 +108,9 @@ export default {
         // axios封装的error对象
         //  - error.response.data  后端返回的数据
         //  - error.response.status 后端返回的状态码
-        if (error.response && error.response.status === 400) {
+        // if (error.response && error.response.status === 400)
+        // 可选链操作符
+        if (error.response?.status === 400) {
           this.$toast.fail(error.response.data.message)
         } else {
           // 1. js导致错误, 2. 507
