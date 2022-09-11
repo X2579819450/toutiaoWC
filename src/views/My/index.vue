@@ -18,9 +18,9 @@
                 round
                 width="1.5rem"
                 height="1.5rem"
-                src="https://img01.yzcdn.cn/vant/cat.jpeg"
+                :src="userInfo.photo"
               />
-              <span class="mobile">13111111111</span>
+              <span class="mobile"> {{ userInfo.name }} </span>
             </van-row>
           </van-col>
 
@@ -43,19 +43,19 @@
         <van-row>
           <van-grid class="grid" :border="false">
             <van-grid-item text="头条">
-              <template #icon>0</template>
+              <template #icon> {{ userInfo.art_count }} </template>
             </van-grid-item>
 
             <van-grid-item text="粉丝">
-              <template #icon>0</template>
+              <template #icon> {{ userInfo.fans_count }} </template>
             </van-grid-item>
 
             <van-grid-item text="关注">
-              <template #icon>0</template>
+              <template #icon> {{ userInfo.follow_count }} </template>
             </van-grid-item>
 
             <van-grid-item text="获赞">
-              <template #icon>0</template>
+              <template #icon> {{ userInfo.like_count }} </template>
             </van-grid-item>
           </van-grid>
         </van-row>
@@ -101,11 +101,18 @@
 <script>
 import { mapGetters } from 'vuex'
 import mobileSrc from '@/assets/images/mobile.png'
+// 引入API
+import { getUserInfoAPI } from '@/api'
 export default {
+  name: 'My',
   data() {
     return {
-      mobileSrc
+      mobileSrc,
+      userInfo: {}
     }
+  },
+  created() {
+    this.getUserInfo()
   },
   computed: {
     ...mapGetters(['isLogin'])
@@ -118,6 +125,26 @@ export default {
       })
 
       this.$store.commit('SET_TOKEN', {})
+    },
+    // 获取用户的信息
+    async getUserInfo() {
+      try {
+        // 用户登录了继续
+        if (!this.isLogin) return
+
+        const { data } = await getUserInfoAPI()
+
+        this.userInfo = data.data
+      } catch (error) {
+        // error
+        // 1.js导致的 2. axios导致的
+        // js和400,507给程序员提示, 401来说用户提示, 重新登录
+        if (error.response && error.response.status === 401) {
+          this.$toast.fail('用户认证失败, 请重新登录')
+        } else {
+          throw error
+        }
+      }
     }
   }
 }
